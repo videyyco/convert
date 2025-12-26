@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Videy.co - Convert Any Video Link</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #0f0f0f; color: white; }
+        .container { max-width: 600px; margin: 50px auto; padding: 20px; }
+        .logo { text-align: center; margin-bottom: 30px; }
+        .logo h1 { color: #ff4757; font-size: 3em; }
+        .converter { background: #1a1a1a; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .input-group { margin-bottom: 20px; }
+        input[type="text"] { width: 100%; padding: 15px; border: 2px solid #333; border-radius: 10px; background: #222; color: white; font-size: 16px; }
+        button { width: 100%; padding: 15px; background: linear-gradient(45deg, #ff4757, #ff3838); color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .result { margin-top: 20px; padding: 15px; background: #222; border-radius: 10px; display: none; }
+        .short-link { color: #00cec9; font-weight: bold; word-break: break-all; }
+        .platforms { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; justify-content: center; }
+        .platform { background: #222; padding: 10px 20px; border-radius: 20px; font-size: 12px; opacity: 0.8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>videy.co</h1>
+            <p>Convert any video link to videy.co short link</p>
+        </div>
+        
+        <div class="converter">
+            <div class="input-group">
+                <input type="text" id="videoUrl" placeholder="Paste video link dari YouTube, TikTok, Instagram, Twitter, Facebook, dll..." autocomplete="off">
+            </div>
+            <button onclick="convertLink()">Convert to videy.co</button>
+            
+            <div class="result" id="result">
+                <p>Your videy.co link:</p>
+                <p class="short-link" id="shortLink"></p>
+                <button onclick="copyLink()" style="margin-top:10px; background:#00cec9;">Copy Link</button>
+            </div>
+        </div>
+        
+        <div class="platforms">
+            <div class="platform">YouTube</div>
+            <div class="platform">TikTok</div>
+            <div class="platform">Instagram</div>
+            <div class="platform">Twitter</div>
+            <div class="platform">Facebook</div>
+            <div class="platform">Twitch</div>
+            <div class="platform">Vimeo</div>
+            <div class="platform">Dailymotion</div>
+            <div class="platform">+ 50+ lainnya</div>
+        </div>
+    </div>
+
+    <script>
+        async function convertLink() {
+            const url = document.getElementById('videoUrl').value;
+            if (!url) return alert('Masukkan link video!');
+            
+            const response = await fetch('/api/convert', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: url })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                document.getElementById('shortLink').textContent = data.shortUrl;
+                document.getElementById('result').style.display = 'block';
+            } else {
+                alert('Error: ' + data.message);
+            }
+        }
+        
+        function copyLink() {
+            const link = document.getElementById('shortLink').textContent;
+            navigator.clipboard.writeText(link);
+            alert('Link copied!');
+        }
+    </script>
+</body>
+</html>
